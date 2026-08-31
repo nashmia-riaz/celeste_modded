@@ -30,6 +30,9 @@ k_down=3
 k_jump=4
 k_dash=5
 
+debugging=false
+debug_level = {x=1,y=0}
+
 -- entry point --
 -----------------
 
@@ -44,11 +47,17 @@ function title_screen()
 	frames=0
 	deaths=0
 	max_djump=1
-	start_game=false
-	start_game_flash=0
-	music(40,0,7)
+	begin_game()
+	if(debugging) then
+		begin_game()
+		load_room(debug_level.x, debug_level.y)
+	else
+		start_game=false
+		start_game_flash=0
+		music(40,0,7)
 	
-	load_room(7,3)
+		load_room(7,3)
+	end
 end
 
 function begin_game()
