@@ -30,8 +30,9 @@ k_down=3
 k_jump=4
 k_dash=5
 
-debugging=true
+debugging=false
 debug_level = {x=4,y=0}
+final_level = {x=6, y=3}
 
 -- entry point --
 -----------------
@@ -652,6 +653,7 @@ fly_fruit={
 			sfx_timer=20
 			sfx(13)
 			got_fruit[1+level_index()] = true
+			score += 100
 			init_object(lifeup,this.x,this.y)
 			destroy_object(this)
 		end
@@ -1124,7 +1126,9 @@ function next_room()
   music(30,500,7)
  end
 
-	if room.x==7 then
+	if(room.x==4) then
+		load_room(final_level.x, final_level.y)
+	elseif room.x==7 then
 		load_room(0,room.y+1)
 	else
 		load_room(room.x+1,room.y)
@@ -1344,6 +1348,7 @@ function _draw()
 		print("x+c",58,80,5)
 		print("matt thorson",42,96,5)
 		print("noel berry",46,102,5)
+		print("modded for experiment", 24, 120, 13)
 	end
 	
 	if level_index()==30 then
@@ -1372,13 +1377,13 @@ function draw_custom_ui()
     
     camera(0, 0)
 
-	rectfill(1, 116, 26, 126, 0) 
+	rectfill(1, 116, 23, 126, 0) 
     spr(26, 2, 117)     
-    print(score/100 .."/" ..30, 11, 119, 7) 
+    print(score/100 .."/" ..5, 11, 119, 7) 
 	
-	rectfill(108, 116, 126, 126, 0) 
-    spr(128, 110, 117) 
-    print("x" ..deaths, 119, 119, 7) 
+	rectfill(105, 116, 126, 126, 0) 
+    spr(128, 107, 117) 
+    print("x" ..deaths, 115, 119, 7) 
     
     
     camera(cam_x, cam_y)
