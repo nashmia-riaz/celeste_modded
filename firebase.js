@@ -1,12 +1,7 @@
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
-
- // Check environment
- const isProduction = window.location.hostname.includes('github.io');
+ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
 
   let db = null;
 
-  // Only initialize Firebase if we are live on GitHub Pages
-  if (isProduction) {
     const firebaseConfig = {
       apiKey: "AIzaSyAK6wJUBK83xIwwuQPIc6FdefZBTe1",
       authDomain: "://firebaseapp.com",
@@ -20,9 +15,7 @@
     firebase.initializeApp(firebaseConfig);
     db = firebase.database();
     console.log("Firebase initialized successfully (Production Mode)");
-  } else {
-    console.log("Running locally. Firebase bypassed (Development Mode)");
-  }
+
 
   // --- PERSISTENT SESSION ID LOGIC ---
   function generateUUID() {
@@ -37,6 +30,7 @@
     sessionId = generateUUID();
     localStorage.setItem("pico8_session_id", sessionId);
   }
+  
   console.log(`Session ID: ${sessionId}`);
 
   // Initialize and poll GPIO
