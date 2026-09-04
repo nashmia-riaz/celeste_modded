@@ -346,8 +346,8 @@ player =
 function finish_level()
 
   -- Calculate differences
-  local elapsed_m = minutes - time_at_start_of_level.m
-  local elapsed_s = seconds - time_at_start_of_level.s
+  local elapsed_m = abs(minutes - time_at_start_of_level.m)
+  local elapsed_s = abs(seconds - time_at_start_of_level.s)
 
 
   -- Determine level number using room coordinates

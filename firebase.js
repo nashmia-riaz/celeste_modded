@@ -1,14 +1,12 @@
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
 
-// Check environment
-  const isLocal = window.location.protocol === 'file:' || 
-                  window.location.hostname === 'localhost' || 
-                  window.location.hostname === '127.0.0.1';
+ // Check environment
+ const isProduction = window.location.hostname.includes('github.io');
 
   let db = null;
 
   // Only initialize Firebase if we are live on GitHub Pages
-  if (!isLocal && typeof firebase !== 'undefined') {
+  if (isProduction && typeof firebase !== 'undefined') {
     const firebaseConfig = {
       apiKey: "AIzaSyAK6wJUBK83xIwwuQPIc6FdefZBTe1",
       authDomain: "://firebaseapp.com",
