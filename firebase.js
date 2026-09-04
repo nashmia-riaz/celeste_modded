@@ -6,7 +6,7 @@
   let db = null;
 
   // Only initialize Firebase if we are live on GitHub Pages
-  if (isProduction && typeof firebase !== 'undefined') {
+  if (isProduction) {
     const firebaseConfig = {
       apiKey: "AIzaSyAK6wJUBK83xIwwuQPIc6FdefZBTe1",
       authDomain: "://firebaseapp.com",
