@@ -16,6 +16,7 @@ shake=0
 will_restart=false
 delay_restart=0
 got_fruit={}
+level_deaths={0,0,0,0,0}
 has_dashed=false
 sfx_timer=0
 has_key=false
@@ -45,6 +46,7 @@ end
 
 function title_screen()
 	got_fruit = {}
+	level_deaths={}
 	for i=0,29 do
 		add(got_fruit,false) end
 	frames=0
@@ -352,14 +354,28 @@ function finish_level()
 
   -- Determine level number using room coordinates
   local level_num = room.x + 1
+  local fruit_status = got_fruit[1+level_index()] and "true" or "false"
 
   -- Format the string safely using standard string concatenation
   -- Example Output: "time:1:2m:14s"
-  local log_msg = "time:"..level_num..":"..elapsed_m.."m:"..elapsed_s.."s"
+  local log_msg = "level_finished:time:"..elapsed_m.."m:"..elapsed_s.."s:strawberry:"..fruit_status..":deaths:"..level_deaths[room.x]
   
   log_to_console(log_msg)
 
   time_at_start_of_level = {m=minutes, s=seconds}
+end
+
+function finish_game()
+	local total_fruits = 0
+
+	for i=1,#got_fruit do
+		if got_fruit[i] == true then
+			total_fruits = total_fruits + 1
+		end
+	end
+
+	local log_msg = "game_finished:time:"..minutes.."m:"..seconds.."s:strawberry:"..total_fruits..":deaths:"..deaths
+	log_to_console(log_msg)
 end
 
 psfx=function(num)
@@ -953,6 +969,7 @@ flag = {
 			print("x"..this.score,64,9,7)
 			draw_time(49,16)
 			print("deaths:"..deaths,48,24,7)
+			finish_game()
 		elseif this.check(player,0,0) then
 			sfx(55)
 	  sfx_timer=30
@@ -1109,6 +1126,8 @@ function kill_player(obj)
 	sfx_timer=12
 	sfx(0)
 	deaths+=1
+	level_deaths[room.x] = (level_deaths[room.x] or 0) + 1
+  	log_to_console("deaths" .. ":" .. level_deaths[room.x])
 	shake=10
 	destroy_object(obj)
 	dead_particles={}
@@ -1125,27 +1144,34 @@ function kill_player(obj)
 		})
 		restart_room()
 	end
-	
-  	log_to_console("log death:" .. ":" .. deaths)
 end
 
 function log_to_console(msg)
-  -- 0x5f80 is our "status" pin. 
-  -- 0 means idle, 1 means JavaScript is currently reading, 2 means new data is ready.
+  -- Formulate the string (ensuring room exists)
+  local rx = room and room.x or 0
+  msg = "Level:"..(rx+1)..":"..(msg or "")
   
-  -- Wait if JavaScript hasn't cleared the last message yet
-  if peek(0x5f80) == 2 then return f end 
+  -- Wait or skip if JS hasn't cleared the last message
+  -- Changed 'return f' to 'return false' (or just return)
+  if peek(0x5f80) == 2 then return false end 
   
-  -- Write the string into the GPIO pins starting at 0x5f81
+  -- Prevent exceeding the 128-byte GPIO limit (0x5f80 to 0x5fff)
+  -- 1 byte for status, 1 byte for null terminator = 126 max chars
+  if #msg > 126 then msg = sub(msg, 1, 126) end
+  
+  -- Write the string into GPIO pins starting at 0x5f81
   for i=1,#msg do
-    poke(0x5f80 + i, ord(sub(msg, i, i)))
+    -- Pico-8 uses sub(str, start, end) or ord(str, index)
+    -- ord(msg, i) is the cleanest way to get the character byte
+    poke(0x5f80 + i, ord(msg, i))
   end
   
-  -- Null-terminate the string so JS knows where it ends
+  -- Null-terminate the string
   poke(0x5f80 + #msg + 1, 0)
   
-  -- Set status pin to 2 to tell JavaScript to read it
+  -- Set status pin to 2 to signal JavaScript
   poke(0x5f80, 2)
+  return true
 end
 -- room functions --
 --------------------
@@ -1170,6 +1196,7 @@ function next_room()
   music(30,500,7)
  end
 
+	level_deaths[room.x]=0
 	if(room.x==4) then
 		load_room(final_level.x, final_level.y)
 	elseif room.x==7 then
@@ -1177,6 +1204,8 @@ function next_room()
 	else
 		load_room(room.x+1,room.y)
 	end
+
+	add(level_deaths, 0)
 end
 
 function load_room(x,y)
