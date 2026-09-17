@@ -41,6 +41,7 @@ time_at_start_of_level={m=0, s=0}
 -----------------
 
 function _init()
+    poke(0x5f2d, 1) 
 	title_screen()
 end
 
@@ -1296,7 +1297,7 @@ function _update()
 	
 	-- start game
 	if is_title() then
-		if not start_game and (btn(k_jump) or btn(k_dash)) then
+		if not start_game and (stat(28,29) or stat(28,27)) then
 			music(-1)
 			start_game_flash=50
 			start_game=true
