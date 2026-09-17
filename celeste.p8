@@ -46,7 +46,6 @@ end
 
 function title_screen()
 	got_fruit = {}
-	level_deaths={}
 	for i=0,29 do
 		add(got_fruit,false) end
 	frames=0
@@ -357,8 +356,8 @@ function finish_level()
   local fruit_status = got_fruit[1+level_index()] and "true" or "false"
 
   -- Format the string safely using standard string concatenation
-  -- Example Output: "time:1:2m:14s"
-  local log_msg = "level_finished:time:"..elapsed_m.."m:"..elapsed_s.."s:strawberry:"..fruit_status..":deaths:"..level_deaths[room.x]
+  local deaths_count = level_deaths[room.x] or 0
+  local log_msg = "level_finished:time:"..elapsed_m.."m:"..elapsed_s.."s:strawberry:"..fruit_status..":deaths:"..deaths_count
   
   log_to_console(log_msg)
 
