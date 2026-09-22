@@ -133,7 +133,7 @@ player =
 	update=function(this)
 		if (pause_player) return
 		
-		local input = btn(k_right) and 1 or (btn(k_left) and -1 or 0)
+		local input = (btn(k_right) or stat(28,7)) and 1 or ((btn(k_left) or stat(28,4)) and -1 or 0)
 		
 		-- spikes collide
 		if spikes_at(this.x+this.hitbox.x,this.y+this.hitbox.y,this.hitbox.w,this.hitbox.h,this.spd.x,this.spd.y) then
@@ -151,16 +151,16 @@ player =
 		 init_object(smoke,this.x,this.y+4)
 		end
 
-		local jump = btn(k_jump) and not this.p_jump
-		this.p_jump = btn(k_jump)
+		local jump = stat(28, 5)  and not this.p_jump
+		this.p_jump = stat(28, 5)
 		if (jump) then
 			this.jbuffer=4
 		elseif this.jbuffer>0 then
 		 this.jbuffer-=1
 		end
 		
-		local dash = btn(k_dash) and not this.p_dash
-		this.p_dash = btn(k_dash)
+		local dash = stat(28, 17) and not this.p_dash
+		this.p_dash = stat(28, 17)
 		
 		if on_ground then
 			this.grace=6
@@ -259,7 +259,7 @@ player =
 		 	this.dash_time=4
 		 	has_dashed=true
 		 	this.dash_effect_time=10
-		 	local v_input=(btn(k_up) and -1 or (btn(k_down) and 1 or 0))
+		 	local v_input=((btn(k_up) or stat(28, 26))and -1 or ((btn(k_down) or stat(28, 22)) and 1 or 0))
 		 	if input!=0 then
 		  	if v_input!=0 then
 		   	this.spd.x=input*d_half
@@ -309,11 +309,11 @@ player =
 			else
 				this.spr=3
 			end
-		elseif btn(k_down) then
+		elseif (btn(k_down) or stat(28, 22)) then
 			this.spr=6
-		elseif btn(k_up) then
+		elseif (btn(k_up) or stat(28, 26)) then
 			this.spr=7
-		elseif (this.spd.x==0) or (not btn(k_left) and not btn(k_right)) then
+		elseif (this.spd.x==0) or (not (btn(k_left) or stat(28,4)) and not (btn(k_right) or stat(28,7))) then
 			this.spr=1
 		else
 			this.spr=1+this.spr_off%4
@@ -396,7 +396,7 @@ set_hair_color=function(djump)
 end
 
 draw_hair=function(obj,facing)
-	local last={x=obj.x+4-facing*2,y=obj.y+(btn(k_down) and 4 or 3)}
+	local last={x=obj.x+4-facing*2,y=obj.y+((btn(k_down) or stat(28, 22)) and 4 or 3)}
 	foreach(obj.hair,function(h)
 		h.x+=(last.x-h.x)/1.5
 		h.y+=(last.y+0.5-h.y)/1.5
@@ -1297,7 +1297,7 @@ function _update()
 	
 	-- start game
 	if is_title() then
-		if not start_game and (stat(28,29) or stat(28,27)) then
+		if not start_game and (stat(28,5) or stat(28,17)) then
 			music(-1)
 			start_game_flash=50
 			start_game=true
@@ -1417,10 +1417,22 @@ function _draw()
 	rectfill(128,-5,133,133,0)
 	
 	-- credits
-	if is_title() then
-		print("w+n",58,80,5)
-		print("matt thorson",42,96,5)
-		print("noel berry",46,102,5)
+	if is_title() then		
+    	spr(129, 38, 66)	
+    	spr(130, 30, 75)	
+    	spr(131, 38, 75)	
+    	spr(132, 46, 75)
+		print("or", 60, 76, 5) 
+    	spr(135, 82, 66)	
+    	spr(137, 74, 75)	
+    	spr(136, 82, 75)	
+    	spr(138, 90, 75)
+
+		spr(133, 50, 92)
+		print("+", 62, 92, 5) 
+		spr(134, 70, 92)
+
+		print("matt thorson + noel berry",16,112,5)
 		print("modded for experiment", 24, 120, 13)
 	end
 	
