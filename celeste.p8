@@ -654,9 +654,9 @@ fruit={
 		if hit~=nil then
 		 hit.djump=max_djump
 			sfx_timer=20
-			sfx(13)
-			got_fruit[1+level_index()] = true
+			sfx(13)			
 			if room.y < 1 then
+				got_fruit[1+level_index()] = true
 				score += 100
 			end
 			init_object(lifeup,this.x,this.y)
