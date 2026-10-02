@@ -37,6 +37,8 @@ final_level = {x=6, y=3}
 
 time_at_start_of_level={m=0, s=0}
 
+has_finished_game=false
+
 -- entry point --
 -----------------
 
@@ -381,6 +383,9 @@ function finish_game()
 		end
 	end
 
+	if(has_finished_game) return;
+
+	has_finished_game = true
 	local log_msg = "game_finished:time:"..minutes.."m:"..seconds.."s:strawberry:"..total_fruits..":deaths:"..deaths
 	log_to_console(log_msg)
 end
