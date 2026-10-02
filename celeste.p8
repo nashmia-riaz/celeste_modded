@@ -369,8 +369,10 @@ function finish_level()
   local deaths_count = level_deaths[room.x] or 0
   local log_msg = "level_finished:time:"..elapsed_m.."m:"..elapsed_s.."s:strawberry:"..fruit_status..":deaths:"..deaths_count
   
-  log_to_console(log_msg)
-
+  if(room.y < 1) then
+  	log_to_console(log_msg)
+  end
+  	
   time_at_start_of_level = {m=minutes, s=seconds}
 end
 
